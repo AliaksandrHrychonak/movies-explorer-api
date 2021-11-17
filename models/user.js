@@ -28,15 +28,15 @@ const UserSchema = new Schema({
 });
 
 UserSchema.statics.findUserByCredentials = function findUserByCredentials(email, password) {
-  this.findOne({ email }).select('+password')
+  return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw ApiError.UnauthorizedError();
+        throw ApiError.UnauthorizedError('unauth');
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw ApiError.UnauthorizedError();
+            throw ApiError.UnauthorizedError('unauth');
           }
           return user;
         });

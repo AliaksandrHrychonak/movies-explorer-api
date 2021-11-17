@@ -1,9 +1,16 @@
-module.exports = ((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
+const ApiError = require('../exception/api-error');
 
-  res.status(statusCode).send({
-    message: statusCode === 500
-      ? '500 - Что то пошло не так!'
+// eslint-disable-next-line consistent-return
+module.exports = ((err, req, res, next) => {
+  if (err instanceof ApiError) {
+    return res.status(err.status).send({
+      message: err.message,
+    });
+  }
+  const { status = 500, message } = err;
+  res.status(status).send({
+    message: status === 500
+      ? 'На сервере ошибка'
       : message,
   });
 

@@ -8,7 +8,7 @@ module.exports = class ApiError extends Error {
     return new ApiError(401, message);
   }
 
-  static BadRequest(message) {
+  static BadRequestError(message) {
     return new ApiError(400, message);
   }
 
@@ -20,7 +20,7 @@ module.exports = class ApiError extends Error {
     return new ApiError(403, message);
   }
 
-  static NotFound(message) {
+  static NotFoundError(message) {
     return new ApiError(404, message);
   }
 };
