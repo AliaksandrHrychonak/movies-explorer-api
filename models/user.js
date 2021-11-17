@@ -1,5 +1,7 @@
 const { Schema, model } = require('mongoose');
 const isEmail = require('validator/lib/isEmail');
+const bcrypt = require('bcryptjs');
+const ApiError = require('../exception/api-error');
 
 const UserSchema = new Schema({
   name: {
@@ -25,4 +27,19 @@ const UserSchema = new Schema({
   },
 });
 
+UserSchema.statics.findUserByCredentials = function findUserByCredentials(email, password) {
+  this.findOne({ email }).select('+password')
+    .then((user) => {
+      if (!user) {
+        throw ApiError.UnauthorizedError();
+      }
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            throw ApiError.UnauthorizedError();
+          }
+          return user;
+        });
+    });
+};
 module.exports = model('User', UserSchema);
