@@ -9,8 +9,10 @@ const errorConfig = {
   url_error: 'Формат ссылки не верный!',
   email_error: 'Формат email не верный!',
   movie_create_error: 'Переданны некорректные данные при создани создании карточки фильма!',
-  movie_error_id: 'Переданны некорректные данные при поиске фильма по _id',
+  movie_error_id: 'Переданны некорректный _id при попытке удаление фильма!',
   not_found_error: 'Ресурс не найден!',
+  movie_forbidden_error: 'Фильм вам не принадлежит!',
+  movie_is_delete: 'Фильм удалён успешно!',
 };
 
 module.exports = errorConfig;

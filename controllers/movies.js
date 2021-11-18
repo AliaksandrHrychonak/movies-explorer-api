@@ -43,12 +43,17 @@ module.exports.createMovie = (req, res, next) => {
     });
 };
 
-module.exports.getMovie = (req, res, next) => {
+module.exports.deleteMovie = (req, res, next) => {
   const { movieId } = req.params;
   MovieModel.findById(movieId)
     .orFail(() => ApiError.NotFoundError(errConfig.movie_error_id))
-    .then((user) => {
-      res.send(user);
+    .then((movie) => {
+      if (movie.owner.toString() !== req.user.id.toString()) {
+        next(ApiError.ForbiddenError(errConfig.movie_forbidden_error));
+      }
+      MovieModel.findByIdAndRemove(movieId)
+        .then(() => res.send({ message: errConfig.movie_is_delete }))
+        .catch((err) => next(err));
     })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
