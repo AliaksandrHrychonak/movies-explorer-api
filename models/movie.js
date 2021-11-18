@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema, model } = require('mongoose');
 const validator = require('validator');
+const errConfig = require('../utils/error-config');
 
 const movieSchema = Schema({
   country: {
@@ -28,7 +29,7 @@ const movieSchema = Schema({
     required: true,
     validate: {
       validator: (url) => validator.isURL(url, { require_protocol: true }),
-      message: '',
+      message: errConfig.url_error,
     },
   },
   trailer: {
@@ -36,7 +37,7 @@ const movieSchema = Schema({
     required: true,
     validate: {
       validator: (url) => validator.isURL(url, { require_protocol: true }),
-      message: '',
+      message: errConfig.url_error,
     },
   },
   thumbnail: {
@@ -44,7 +45,7 @@ const movieSchema = Schema({
     required: true,
     validate: {
       validator: (url) => validator.isURL(url, { require_protocol: true }),
-      message: '',
+      message: errConfig.url_error,
     },
   },
   owner: {

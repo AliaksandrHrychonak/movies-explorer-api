@@ -1,5 +1,6 @@
 const ApiError = require('../exception/api-error');
 const MovieModel = require('../models/movie');
+const errConfig = require('../utils/error-config');
 
 module.exports.getMovies = (req, res, next) => {
   MovieModel.find({})
@@ -36,7 +37,7 @@ module.exports.createMovie = (req, res, next) => {
     .then((movie) => res.status(201).send(movie))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        next(ApiError.BadRequestError('saas'));
+        next(ApiError.BadRequestError(errConfig.movie_create_error));
       }
       next(err);
     });
@@ -45,13 +46,13 @@ module.exports.createMovie = (req, res, next) => {
 module.exports.getMovie = (req, res, next) => {
   const { movieId } = req.params;
   MovieModel.findById(movieId)
-    .orFail(() => ApiError.NotFoundError('Фильм по указанному _id не найден.'))
+    .orFail(() => ApiError.NotFoundError(errConfig.movie_error_id))
     .then((user) => {
       res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        next(new ApiError.NotFoundError('Фильм по указанному _id не найден.'));
+        next(ApiError.NotFoundError(errConfig.movie_error_id));
       }
       next(err);
     });

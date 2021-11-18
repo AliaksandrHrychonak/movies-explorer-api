@@ -1,6 +1,6 @@
 const ApiError = require('../exception/api-error');
+const errConfig = require('../utils/error-config');
 
-// eslint-disable-next-line consistent-return
 module.exports = ((err, req, res, next) => {
   if (err instanceof ApiError) {
     return res.status(err.status).send({
@@ -10,9 +10,9 @@ module.exports = ((err, req, res, next) => {
   const { status = 500, message } = err;
   res.status(status).send({
     message: status === 500
-      ? 'На сервере ошибка'
+      ? errConfig.server_error
       : message,
   });
 
-  next();
+  return next();
 });
