@@ -1,7 +1,6 @@
 const ApiError = require('../exception/api-error');
 const tokenService = require('../controllers/tokens');
 
-// eslint-disable-next-line consistent-return
 module.exports = (req, res, next) => {
   try {
     const authorizationHeader = req.headers.authorization;
@@ -17,7 +16,7 @@ module.exports = (req, res, next) => {
       return next(ApiError.UnauthorizedError());
     }
     req.user = user;
-    next();
+    return next();
   } catch (e) {
     return next(ApiError.UnauthorizedError());
   }
