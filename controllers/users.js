@@ -58,7 +58,7 @@ module.exports.updateUserMe = (req, res, next) => {
 module.exports.registration = (req, res, next) => {
   const { email, password, name } = req.body;
   if (!email || !password || !name) {
-    next(ApiError.UnauthorizedError(errConfig.incorrect_data_user));
+    next(ApiError.ConflictError(errConfig.incorrect_data_user));
   }
   bcrypt.hash(password, Number(SALT))
     .then((hash) => UserModel.create({
@@ -67,7 +67,7 @@ module.exports.registration = (req, res, next) => {
       password: hash,
     })
       .then((user) => {
-        res.status(201).send(user);
+        res.status(201).send({ id: user._id, name: user.name, email: user.email });
       }))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
@@ -83,7 +83,7 @@ module.exports.registration = (req, res, next) => {
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    next(ApiError.UnauthorizedError(errConfig.incorrect_data_user));
+    next(ApiError.BadRequestError(errConfig.incorrect_data_user));
   }
   return UserModel.findUserByCredentials(email, password)
     .then((user) => {
@@ -91,6 +91,9 @@ module.exports.login = (req, res, next) => {
       res.send({ token });
     })
     .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        next(ApiError.BadRequestError(errConfig.incorrect_data_user));
+      }
       next(err);
     });
 };
