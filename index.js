@@ -1,6 +1,7 @@
 require('dotenv').config();
 
-const { PORT, DB_URL } = process.env;
+const { NODE_ENV } = process.env;
+const { PORT, DB_URL } = NODE_ENV === 'production' ? process.env : require('./utils/config');
 const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');

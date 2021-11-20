@@ -4,7 +4,8 @@ const UserModel = require('../models/user');
 const { generateToken } = require('./tokens');
 const errConfig = require('../utils/error-config');
 
-const { SALT } = process.env;
+const { NODE_ENV } = process.env;
+const { SALT } = NODE_ENV === 'production' ? process.env : require('../utils/config');
 
 module.exports.getUserMe = (req, res, next) => {
   UserModel.findById(req.user.id)
