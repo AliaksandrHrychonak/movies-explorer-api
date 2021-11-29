@@ -14,7 +14,7 @@ module.exports.getUserMe = (req, res, next) => {
       res.status(200).send(user);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
+      if (err.name === 'ValidationError') {
         next(ApiError.NotFoundError(errConfig.incorrect_data_id));
       }
       next(err);
@@ -49,7 +49,7 @@ module.exports.updateUserMe = (req, res, next) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(ApiError.BadRequestError(errConfig.incorrect_data_user_update));
       }
-      if (err.name === 'MongoServerError' && err.code === 11000) {
+      if (err.code === 11000) {
         next(ApiError.ConflictError(errConfig.incorrect_data_already_registered));
       }
       next(err);
@@ -73,19 +73,16 @@ module.exports.registration = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(ApiError.BadRequestError(errConfig.incorrect_data_user));
-      }
-      if (err.name === 'MongoServerError' && err.code === 11000) {
+      } else if (err.code === 11000) {
         next(ApiError.ConflictError(errConfig.incorrect_data_already_registered));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-  if (!email || !password) {
-    next(ApiError.BadRequestError(errConfig.incorrect_data_user));
-  }
   return UserModel.findUserByCredentials(email, password)
     .then((user) => {
       const token = generateToken({ id: user._id });

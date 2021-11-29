@@ -11,6 +11,6 @@ router.use('/', authRouter);
 router.use('/users', authMiddleware, usersRouter);
 router.use('/movies', authMiddleware, moviesRouter);
 
-router.all('*', () => { throw ApiError.NotFoundError(errConfig.not_found_error); });
+router.all('*', authMiddleware, () => { throw ApiError.NotFoundError(errConfig.not_found_error); });
 
 module.exports = router;
