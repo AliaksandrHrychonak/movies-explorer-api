@@ -86,7 +86,9 @@ module.exports.login = (req, res, next) => {
   return UserModel.findUserByCredentials(email, password)
     .then((user) => {
       const token = generateToken({ id: user._id });
-      res.send({ token });
+      res.send({
+        token, id: user._id, name: user.name, email: user.email,
+      });
     })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
