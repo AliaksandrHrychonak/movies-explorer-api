@@ -22,18 +22,17 @@ module.exports.getUserMe = (req, res, next) => {
 };
 
 module.exports.updateUserMe = (req, res, next) => {
-  const { name, email } = req.body;
-  if (!name || !email) {
+  if (!req.body) {
     next(ApiError.BadRequestError(errConfig.incorrect_data_user));
   }
-  UserModel.findOne({ email })
+  UserModel.findById(req.user.id)
     .then((candidate) => {
-      if (candidate) {
+      if (!candidate) {
         next(ApiError.ConflictError(errConfig.incorrect_data_already_registered));
       } else {
         UserModel.findByIdAndUpdate(
           req.user.id,
-          { name, email },
+          { ...req.body },
           { runValidators: true, new: true },
         )
           .orFail(() => ApiError.NotFoundError(errConfig.incorrect_data_user_update))
