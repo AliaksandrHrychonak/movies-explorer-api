@@ -27,7 +27,7 @@ module.exports.validateLogin = celebrate({
 
 module.exports.validateUpdateUserInfo = celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required().email(),
+    email: Joi.string().email(),
     name: Joi.string().required().min(2),
   }),
 });
